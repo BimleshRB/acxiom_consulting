@@ -13,7 +13,11 @@ export default function AddMembership() {
   const [result, setResult] = React.useState<any>(null)
 
   React.useEffect(() => {
-    getUsersAction('vendor').then(setVendors)
+    getUsersAction('vendor').then(res => {
+      if (res.success && res.data) {
+        setVendors(res.data)
+      }
+    })
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
