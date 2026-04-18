@@ -21,13 +21,9 @@ export default function LoginPage() {
       e.preventDefault()
       setError("")
       
-      // Auto-correct: remove common typos where role name gets stuck to the email
+      // Auto-correct: remove leading/trailing whitespace
       let cleanEmail = email.trim()
-      const roleSuffix = role.toLowerCase()
-      if (cleanEmail.toLowerCase().endsWith(roleSuffix) && cleanEmail.toLowerCase() !== roleSuffix) {
-        cleanEmail = cleanEmail.slice(0, -roleSuffix.length)
-      }
-
+      
       const res = await loginUserAction(cleanEmail, password.trim(), role)
     if (res.success && res.user) {
       setCurrentUser(res.user)

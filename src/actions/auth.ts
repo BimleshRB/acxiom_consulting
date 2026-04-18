@@ -10,7 +10,8 @@ export async function loginUserAction(email: string, password: string, role: Rol
   await connectToDatabase()
   
   // Try to find the user by email first to see if they exist with any role
-  const userByEmail = await User.findOne({ email }).lean()
+  const searchEmail = email.toLowerCase().trim()
+  const userByEmail = await User.findOne({ email: searchEmail }).lean()
   
   if (!userByEmail) {
     console.log(`[AUTH] No user found with email: ${email}`);
