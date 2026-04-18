@@ -10,6 +10,7 @@ export default function VendorItems() {
   const pathname = usePathname()
   const { currentUser } = useStore()
   const [products, setProducts] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     if (currentUser?.id) {
@@ -17,6 +18,7 @@ export default function VendorItems() {
         if (res.success && res.data) {
           setProducts(res.data)
         }
+        setLoading(false)
       })
     }
   }, [currentUser])
@@ -58,9 +60,13 @@ export default function VendorItems() {
                 </tr>
               </thead>
               <tbody>
-                {products.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan={4} className="p-12 text-center text-gray-400 font-bold uppercase bg-gray-50">No items found</td>
+                    <td colSpan={4} className="p-12 text-center text-[#4f81c7] font-black uppercase tracking-widest animate-pulse bg-slate-50">--- Synchronizing Inventory ---</td>
+                  </tr>
+                ) : products.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="p-12 text-center text-gray-400 font-bold uppercase bg-gray-50 tracking-widest italic">--- No Registered Items ---</td>
                   </tr>
                 ) : (
                   products.map(p => (

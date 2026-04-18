@@ -5,6 +5,7 @@ import { getUsersAction, deleteUserAction } from "@/actions/admin"
 
 export default function AdminUsers() {
   const [users, setUsers] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     Promise.all([
@@ -15,6 +16,7 @@ export default function AdminUsers() {
       if (u.success && u.data) combined.push(...u.data)
       if (v.success && v.data) combined.push(...v.data)
       setUsers(combined)
+      setLoading(false)
     })
   }, [])
 
@@ -45,9 +47,13 @@ export default function AdminUsers() {
                   </tr>
                 </thead>
                 <tbody className="divide-y-2 divide-white">
-                  {users.length === 0 ? (
+                  {loading ? (
                     <tr>
-                      <td colSpan={4} className="p-12 text-center text-gray-400 font-bold uppercase tracking-widest italic bg-slate-50">Fetching account records...</td>
+                      <td colSpan={4} className="p-12 text-center text-[#4f81c7] font-black uppercase tracking-widest animate-pulse bg-slate-50">--- Synchronizing Registry ---</td>
+                    </tr>
+                  ) : users.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="p-12 text-center text-gray-400 font-bold uppercase tracking-widest italic bg-slate-50">--- No Registered Accounts ---</td>
                     </tr>
                   ) : (
                     users.map(u => (

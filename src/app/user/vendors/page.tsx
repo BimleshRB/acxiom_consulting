@@ -10,12 +10,14 @@ export default function VendorsList() {
   const category = searchParams.get('category')
   
   const [vendors, setVendors] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     getVendorsByCategoryAction(category).then(res => {
       if (res.success && res.data) {
         setVendors(res.data)
       }
+      setLoading(false)
     })
   }, [category])
 
@@ -26,8 +28,12 @@ export default function VendorsList() {
       </div>
 
       <div className="flex flex-wrap gap-10 justify-center mt-12 max-w-6xl mx-auto">
-        {vendors.length === 0 ? (
-           <div className="bg-white border-2 border-dashed border-gray-400 p-20 text-center font-black uppercase text-gray-400 tracking-widest">
+        {loading ? (
+           <div className="bg-white border-2 border-dashed border-gray-400 p-20 text-center font-black uppercase text-[#4f81c7] tracking-widest animate-pulse w-full max-w-2xl">
+              --- SYNCHRONIZING VENDOR DATA ---
+           </div>
+        ) : vendors.length === 0 ? (
+           <div className="bg-white border-2 border-dashed border-gray-400 p-20 text-center font-black uppercase text-gray-400 tracking-widest w-full max-w-2xl">
               --- No Registered Vendors ---
            </div>
         ) : (

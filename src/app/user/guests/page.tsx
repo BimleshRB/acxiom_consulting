@@ -8,7 +8,7 @@ import { getGuestsAction, addGuestAction, updateGuestAction, deleteGuestAction }
 export default function GuestList() {
   const { currentUser } = useStore()
   const [guests, setGuests] = React.useState<any[]>([])
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const [newGuest, setNewGuest] = React.useState({ name: '', email: '', phone: '', status: 'Invited' })
   const [editingId, setEditingId] = React.useState<string | null>(null)
 
@@ -24,6 +24,7 @@ export default function GuestList() {
     if (res.success && res.data) {
       setGuests(res.data)
     }
+    setLoading(false)
   }
 
   const handleAdd = async (e: React.FormEvent) => {

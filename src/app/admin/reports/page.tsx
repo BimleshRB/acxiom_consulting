@@ -27,7 +27,13 @@ export default function AdminReports() {
     </div>
   )
 
-  if (!data) return <div className="p-20 text-center font-black uppercase text-gray-400 italic animate-pulse">Establishing secure link to system nodes...</div>
+  if (!data) return (
+    <div className="min-h-screen bg-gray-200 p-20 flex justify-center items-start">
+       <div className="bg-white border-4 border-gray-400 p-20 text-center font-black uppercase text-[#4f81c7] tracking-widest animate-pulse shadow-2xl">
+          --- Establishing Secure Link to System Analytics ---
+       </div>
+    </div>
+  )
 
   return (
     <div className="bg-gray-200 min-h-screen p-8">

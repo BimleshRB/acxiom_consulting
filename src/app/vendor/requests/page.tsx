@@ -8,13 +8,15 @@ import { getVendorOrdersAction, updateOrderStatusAction } from "@/actions/vendor
 export default function VendorRequests() {
   const { currentUser } = useStore()
   const [orders, setOrders] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     if (currentUser?.id) {
       getVendorOrdersAction(currentUser.id).then(res => {
-        if (res.success) {
+        if (res.success && res.data) {
           setOrders(res.data)
         }
+        setLoading(false)
       })
     }
   }, [currentUser])
@@ -49,9 +51,13 @@ export default function VendorRequests() {
                 </tr>
               </thead>
               <tbody>
-                {orders.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan={3} className="p-20 text-center text-gray-400 font-bold uppercase bg-slate-50">No requests found</td>
+                    <td colSpan={3} className="p-20 text-center text-[#4f81c7] font-black uppercase tracking-widest animate-pulse bg-slate-50 text-sm">--- Synchronizing Requests ---</td>
+                  </tr>
+                ) : orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="p-20 text-center text-gray-400 font-bold uppercase bg-slate-50 tracking-widest italic">--- No Pending Service Requests ---</td>
                   </tr>
                 ) : (
                   orders.map(o => (

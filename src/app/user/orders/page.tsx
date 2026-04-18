@@ -8,13 +8,15 @@ import { getUserOrdersAction } from "@/actions/user"
 export default function UserOrders() {
   const { currentUser } = useStore()
   const [orders, setOrders] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     if (currentUser) {
       getUserOrdersAction(currentUser.id).then(res => {
-        if (res.success) {
+        if (res.success && res.data) {
           setOrders(res.data)
         }
+        setLoading(false)
       })
     }
   }, [currentUser])
@@ -43,49 +45,52 @@ export default function UserOrders() {
                   </tr>
                </thead>
                <tbody>
-                  {orders.length === 0 ? (
-                     <tr>
-                        <td colSpan={4} className="p-24 text-center text-gray-400 font-black uppercase tracking-[0.2em] bg-slate-50">
-                           <span className="text-4xl block mb-2 opacity-50">📋</span>
-                           Empty Log
-                        </td>
-                     </tr>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={4} className="p-24 text-center text-[#4f81c7] font-black uppercase tracking-widest animate-pulse bg-slate-50">--- Synchronizing Records ---</td>
+                    </tr>
+                  ) : orders.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="p-24 text-center text-gray-400 font-black uppercase tracking-[0.2em] bg-slate-50 italic">
+                         --- No Order History Found ---
+                      </td>
+                    </tr>
                   ) : (
-                     orders.map(o => (
-                        <tr key={o.id} className="bg-[#dbeafe] hover:bg-blue-100 transition-colors group">
-                           <td className="border-2 border-white p-6 align-top">
-                              <div className="flex flex-col gap-1">
-                                 <span className="bg-[#4f81c7] text-white text-[9px] font-black px-2 py-0.5 uppercase tracking-tighter w-fit mb-1">VENDOR</span>
-                                 <span className="text-sm font-black text-slate-800 uppercase tracking-tight">{o.vendorName || 'Catering Services'}</span>
-                                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">ORDER #{o.id.slice(-6).toUpperCase()}</span>
-                              </div>
-                           </td>
-                           <td className="border-2 border-white p-6 align-top">
-                              <div className="flex flex-col gap-1">
-                                 {o.items?.map((item: any, idx: number) => (
-                                    <div key={idx} className="flex gap-2 text-[11px] font-bold text-slate-600 uppercase">
-                                       <span className="text-[#4f81c7]">•</span>
-                                       <span>{item.name} <span className="text-slate-400">({item.quantity})</span></span>
-                                    </div>
-                                 ))}
-                              </div>
-                           </td>
-                           <td className="border-2 border-white p-6 text-center align-top">
-                              <span className="text-sm font-black text-slate-900 bg-white px-3 py-1 border border-gray-300 shadow-inner">
-                                 Rs {o.totalAmount}/-
-                              </span>
-                           </td>
-                           <td className="border-2 border-white p-6 text-center align-middle">
-                              <div className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-sm border-2 inline-block ${
-                                 o.status === 'Received' ? 'bg-yellow-500 text-white border-yellow-600' :
-                                 o.status === 'Ready for Shipping' ? 'bg-blue-500 text-white border-blue-600' :
-                                 'bg-[#558844] text-white border-[#457038]'
-                              }`}>
-                                 {o.status}
-                              </div>
-                           </td>
-                        </tr>
-                     ))
+                    orders.map(o => (
+                      <tr key={o.id} className="bg-[#dbeafe] hover:bg-blue-100 transition-colors group">
+                        <td className="border-2 border-white p-6 align-top">
+                           <div className="flex flex-col gap-1">
+                              <span className="bg-[#4f81c7] text-white text-[9px] font-black px-2 py-0.5 uppercase tracking-tighter w-fit mb-1">VENDOR</span>
+                              <span className="text-sm font-black text-slate-800 uppercase tracking-tight">{o.vendorName || 'Catering Services'}</span>
+                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">ORDER #{o.id.slice(-6).toUpperCase()}</span>
+                           </div>
+                        </td>
+                        <td className="border-2 border-white p-6 align-top">
+                           <div className="flex flex-col gap-1">
+                              {o.items?.map((item: any, idx: number) => (
+                                 <div key={idx} className="flex gap-2 text-[11px] font-bold text-slate-600 uppercase">
+                                    <span className="text-[#4f81c7]">•</span>
+                                    <span>{item.name} <span className="text-slate-400">({item.quantity})</span></span>
+                                 </div>
+                              ))}
+                           </div>
+                        </td>
+                        <td className="border-2 border-white p-6 text-center align-top">
+                           <span className="text-sm font-black text-slate-900 bg-white px-3 py-1 border border-gray-300 shadow-inner">
+                              Rs {o.totalAmount}/-
+                           </span>
+                        </td>
+                        <td className="border-2 border-white p-6 text-center align-middle">
+                           <div className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-sm border-2 inline-block ${
+                              o.status === 'Received' ? 'bg-yellow-500 text-white border-yellow-600' :
+                              o.status === 'Ready for Shipping' ? 'bg-blue-500 text-white border-blue-600' :
+                              'bg-[#558844] text-white border-[#457038]'
+                           }`}>
+                              {o.status}
+                           </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
                </tbody>
             </table>

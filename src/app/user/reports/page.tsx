@@ -8,6 +8,7 @@ import { getUserReportsAction } from "@/actions/reports"
 export default function UserReports() {
   const { currentUser } = useStore()
   const [reports, setReports] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
 
   const [error, setError] = React.useState("")
 
@@ -19,6 +20,7 @@ export default function UserReports() {
         } else if (!res.success) {
           setError(res.error || "Failed to load reports")
         }
+        setLoading(false)
       })
     }
   }, [currentUser])
@@ -47,13 +49,17 @@ export default function UserReports() {
                  </tr>
               </thead>
               <tbody>
-                 {error ? (
+                 {loading ? (
                     <tr>
-                       <td colSpan={4} className="p-20 text-center font-black uppercase text-red-400 italic bg-red-50 border-2 border-red-200">System Error: {error}</td>
+                      <td colSpan={4} className="p-20 text-center text-[#4f81c7] font-black uppercase tracking-widest animate-pulse bg-slate-50">--- Synchronizing Report Log ---</td>
+                    </tr>
+                 ) : error ? (
+                    <tr>
+                       <td colSpan={4} className="p-20 text-center font-black uppercase text-red-400 italic bg-red-50 border-2 border-red-200 shadow-inner">System Error: {error}</td>
                     </tr>
                  ) : reports.length === 0 ? (
                     <tr>
-                       <td colSpan={4} className="p-20 text-center font-black uppercase text-gray-300 italic bg-gray-50">No transaction records found</td>
+                       <td colSpan={4} className="p-20 text-center font-black uppercase text-gray-300 italic bg-gray-50 tracking-widest text-[10px]">--- No Transaction Records Found ---</td>
                     </tr>
                  ) : (
                     reports.map(r => (
