@@ -12,7 +12,11 @@ export default function VendorsList() {
   const [vendors, setVendors] = React.useState<any[]>([])
 
   React.useEffect(() => {
-    getVendorsByCategoryAction(category).then(setVendors)
+    getVendorsByCategoryAction(category).then(res => {
+      if (res.success && res.data) {
+        setVendors(res.data)
+      }
+    })
   }, [category])
 
   return (

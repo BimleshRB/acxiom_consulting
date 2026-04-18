@@ -19,10 +19,11 @@ export default function UpdateMembership() {
     const res = await getMembershipByNumberAction(membershipNo)
     setLoading(false)
     
-    if (res) {
-      setMembership(res)
+    if (res.success) {
+      setMembership(res.data)
     } else {
-      alert("Membership number not found in system.")
+      alert(res.error || "Membership number not found in system.")
+      setMembership(null)
     }
   }
 

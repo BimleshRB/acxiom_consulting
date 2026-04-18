@@ -14,25 +14,35 @@ export default function LoginPage() {
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [error, setError] = React.useState("")
-  
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
   const { setCurrentUser } = useStore()
 
     const handleLogin = async (e: React.FormEvent) => {
       e.preventDefault()
       setError("")
+      setIsSubmitting(true)
+      console.log(`[CLIENT-LOGIN] Triggered at ${new Date().toLocaleTimeString()}`);
       
-      // Auto-correct: remove leading/trailing whitespace
-      let cleanEmail = email.trim()
-      
-      const res = await loginUserAction(cleanEmail, password.trim(), role)
-    if (res.success && res.user) {
-      setCurrentUser(res.user)
-      if (role === 'admin') router.push('/admin/dashboard')
-      if (role === 'vendor') router.push('/vendor/dashboard')
-      if (role === 'user') router.push('/user/dashboard')
-    } else {
-      setError(res.error || "Login Failed")
-    }
+      try {
+        // Auto-correct: remove leading/trailing whitespace
+        let cleanEmail = email.trim()
+        
+        const res = await loginUserAction(cleanEmail, password.trim(), role)
+        console.log(`[CLIENT-LOGIN] Response received: success=${res.success}`);
+
+        if (res.success && res.user) {
+          setCurrentUser(res.user)
+          const target = role === 'admin' ? '/admin/dashboard' : role === 'vendor' ? '/vendor/dashboard' : '/user/dashboard';
+          router.push(target)
+        } else {
+          setError(res.error || "Login Failed")
+        }
+      } catch (err) {
+        console.error("[CLIENT-LOGIN] Unexpected error:", err);
+        setError("An unexpected system error occurred.")
+      } finally {
+        setIsSubmitting(false)
+      }
   }
 
   const fillTestAccount = () => {
@@ -102,8 +112,14 @@ export default function LoginPage() {
             <button type="button" onClick={() => router.push('/')} className="bg-gray-400 hover:bg-gray-500 text-black px-8 py-2 border-2 border-gray-600 shadow-md font-bold uppercase text-xs transition-colors">
               Cancel
             </button>
-            <button type="submit" className="bg-gray-400 hover:bg-gray-500 text-black px-8 py-2 border-2 border-gray-600 shadow-md font-bold uppercase text-xs transition-colors">
-              Login
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className={`px-8 py-2 border-2 border-gray-600 shadow-md font-black uppercase text-xs transition-all ${
+                isSubmitting ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-400 hover:bg-gray-500 text-black active:translate-y-1'
+              }`}
+            >
+              {isSubmitting ? 'Process...' : 'Login System'}
             </button>
           </div>
         </form>

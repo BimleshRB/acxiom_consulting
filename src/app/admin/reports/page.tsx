@@ -6,12 +6,28 @@ import { getAdminReportsAction } from "@/actions/reports"
 
 export default function AdminReports() {
   const [data, setData] = React.useState<any>(null)
+  const [error, setError] = React.useState("")
 
   React.useEffect(() => {
-    getAdminReportsAction().then(setData)
+    getAdminReportsAction().then(res => {
+      if (res.success && res.stats) {
+        setData(res)
+      } else if (!res.success) {
+        setError(res.error || "System Error")
+      }
+    })
   }, [])
 
-  if (!data) return <div className="p-20 text-center font-black uppercase text-gray-400">Loading System Metrics...</div>
+  if (error) return (
+    <div className="p-20 flex flex-col items-center gap-4">
+      <div className="bg-red-100 border-4 border-red-400 p-8 text-red-700 font-black uppercase text-center shadow-lg">
+         {error}
+      </div>
+      <Link href="/admin/dashboard" className="bg-gray-400 px-6 py-2 font-black uppercase text-[10px] text-white">Return to Console</Link>
+    </div>
+  )
+
+  if (!data) return <div className="p-20 text-center font-black uppercase text-gray-400 italic animate-pulse">Establishing secure link to system nodes...</div>
 
   return (
     <div className="bg-gray-200 min-h-screen p-8">

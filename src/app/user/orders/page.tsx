@@ -11,7 +11,11 @@ export default function UserOrders() {
 
   React.useEffect(() => {
     if (currentUser) {
-      getUserOrdersAction(currentUser.id).then(setOrders)
+      getUserOrdersAction(currentUser.id).then(res => {
+        if (res.success) {
+          setOrders(res.data)
+        }
+      })
     }
   }, [currentUser])
 

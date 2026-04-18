@@ -16,10 +16,17 @@ async function connectToDatabase() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 5000, // 5 seconds timeout before failing
+      connectTimeoutMS: 10000,
     };
 
+    console.log('[DB] Initializing new connection attempt...');
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      console.log('[DB] Connection established successfully.');
       return mongoose;
+    }).catch(err => {
+      console.error('[DB] Connection failed:', err.message);
+      throw err;
     });
   }
 

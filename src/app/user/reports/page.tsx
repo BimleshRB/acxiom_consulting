@@ -9,9 +9,17 @@ export default function UserReports() {
   const { currentUser } = useStore()
   const [reports, setReports] = React.useState<any[]>([])
 
+  const [error, setError] = React.useState("")
+
   React.useEffect(() => {
     if (currentUser?.id) {
-      getUserReportsAction(currentUser.id).then(setReports)
+      getUserReportsAction(currentUser.id).then(res => {
+        if (res.success && res.data) {
+          setReports(res.data)
+        } else if (!res.success) {
+          setError(res.error || "Failed to load reports")
+        }
+      })
     }
   }, [currentUser])
 
@@ -39,7 +47,11 @@ export default function UserReports() {
                  </tr>
               </thead>
               <tbody>
-                 {reports.length === 0 ? (
+                 {error ? (
+                    <tr>
+                       <td colSpan={4} className="p-20 text-center font-black uppercase text-red-400 italic bg-red-50 border-2 border-red-200">System Error: {error}</td>
+                    </tr>
+                 ) : reports.length === 0 ? (
                     <tr>
                        <td colSpan={4} className="p-20 text-center font-black uppercase text-gray-300 italic bg-gray-50">No transaction records found</td>
                     </tr>

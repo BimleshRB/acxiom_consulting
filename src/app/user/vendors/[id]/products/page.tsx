@@ -17,8 +17,12 @@ export default function VendorProducts() {
   const [products, setProducts] = React.useState<any[]>([])
 
   React.useEffect(() => {
-    getVendorDetailsAction(vendorId).then(setVendor)
-    getVendorProductsAction(vendorId).then(setProducts)
+    getVendorDetailsAction(vendorId).then(res => {
+      if (res.success && res.data) setVendor(res.data)
+    })
+    getVendorProductsAction(vendorId).then(res => {
+      if (res.success && res.data) setProducts(res.data)
+    })
   }, [vendorId])
 
   return (

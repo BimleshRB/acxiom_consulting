@@ -20,8 +20,10 @@ export default function GuestList() {
 
   const loadGuests = async () => {
     if (!currentUser?.id) return
-    const list = await getGuestsAction(currentUser.id)
-    setGuests(list)
+    const res = await getGuestsAction(currentUser.id)
+    if (res.success && res.data) {
+      setGuests(res.data)
+    }
   }
 
   const handleAdd = async (e: React.FormEvent) => {

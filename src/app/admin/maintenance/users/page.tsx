@@ -10,7 +10,12 @@ export default function AdminUsers() {
     Promise.all([
       getUsersAction('user'),
       getUsersAction('vendor')
-    ]).then(([u, v]) => setUsers([...u, ...v]))
+    ]).then(([u, v]) => {
+      const combined = []
+      if (u.success && u.data) combined.push(...u.data)
+      if (v.success && v.data) combined.push(...v.data)
+      setUsers(combined)
+    })
   }, [])
 
   const handleDelete = async (id: string) => {

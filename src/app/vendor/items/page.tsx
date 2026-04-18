@@ -13,7 +13,11 @@ export default function VendorItems() {
 
   React.useEffect(() => {
     if (currentUser?.id) {
-      getVendorProductsAction(currentUser.id).then(setProducts)
+      getVendorProductsAction(currentUser.id).then(res => {
+        if (res.success && res.data) {
+          setProducts(res.data)
+        }
+      })
     }
   }, [currentUser])
 

@@ -11,7 +11,11 @@ export default function VendorRequests() {
 
   React.useEffect(() => {
     if (currentUser?.id) {
-      getVendorOrdersAction(currentUser.id).then(setOrders)
+      getVendorOrdersAction(currentUser.id).then(res => {
+        if (res.success) {
+          setOrders(res.data)
+        }
+      })
     }
   }, [currentUser])
 
