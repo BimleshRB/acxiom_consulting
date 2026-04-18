@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type Role = 'admin' | 'vendor' | 'user'
 
@@ -31,30 +32,37 @@ type StoreState = {
   setLogout: () => void
 }
 
-export const useStore = create<StoreState>((set) => ({
-  currentUser: null,
-  cart: [],
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      currentUser: null,
+      cart: [],
 
-  setCurrentUser: (user) => set({ currentUser: user }),
-  setLogout: () => set({ currentUser: null, cart: [] }),
-  
-  addToCart: (item) => set((state) => {
-    const existing = state.cart.find(c => c.productId === item.productId)
-    if (existing) {
-      return {
-        cart: state.cart.map(c => c.productId === item.productId ? { ...c, quantity: c.quantity + (item.quantity || 1) } : c)
-      }
+      setCurrentUser: (user) => set({ currentUser: user }),
+      setLogout: () => set({ currentUser: null, cart: [] }),
+      
+      addToCart: (item) => set((state) => {
+        const existing = state.cart.find(c => c.productId === item.productId)
+        if (existing) {
+          return {
+            cart: state.cart.map(c => c.productId === item.productId ? { ...c, quantity: c.quantity + (item.quantity || 1) } : c)
+          }
+        }
+        return { cart: [...state.cart, { ...item, quantity: item.quantity || 1 }] }
+      }),
+      
+      removeFromCart: (productId) => set((state) => ({
+        cart: state.cart.filter(c => c.productId !== productId)
+      })),
+      
+      updateCartQuantity: (productId, quantity) => set((state) => ({
+        cart: state.cart.map(c => c.productId === productId ? { ...c, quantity } : c)
+      })),
+      
+      clearCart: () => set({ cart: [] }),
+    }),
+    {
+      name: 'ems-session-storage',
     }
-    return { cart: [...state.cart, { ...item, quantity: item.quantity || 1 }] }
-  }),
-  
-  removeFromCart: (productId) => set((state) => ({
-    cart: state.cart.filter(c => c.productId !== productId)
-  })),
-  
-  updateCartQuantity: (productId, quantity) => set((state) => ({
-    cart: state.cart.map(c => c.productId === productId ? { ...c, quantity } : c)
-  })),
-  
-  clearCart: () => set({ cart: [] }),
-}))
+  )
+)

@@ -6,9 +6,16 @@ import { useRouter, usePathname } from "next/navigation"
 import { useStore } from "@/lib/store"
 
 export default function AuthHeader() {
+  const [mounted, setMounted] = React.useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const { currentUser, setLogout } = useStore()
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   const isLoginPage = pathname === '/' || pathname?.startsWith('/login') || pathname?.startsWith('/signup')
 
