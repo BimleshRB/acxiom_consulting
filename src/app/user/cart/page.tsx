@@ -9,7 +9,7 @@ export default function UserCart() {
   const router = useRouter()
   const { cart, removeFromCart, updateCartQuantity, clearCart } = useStore()
   
-  const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   return (
     <div className="bg-gray-200 min-h-screen p-8">
@@ -82,7 +82,7 @@ export default function UserCart() {
                            Grand Total
                         </td>
                         <td className="p-4 text-white font-black text-xl text-center border-l-2 border-white">
-                           Rs {grandTotal.toFixed(2)}/-
+                           Rs {total.toFixed(2)}/-
                         </td>
                         <td className="p-4 flex justify-center sticky right-0">
                            <button onClick={() => clearCart()} className="bg-white text-red-600 px-6 py-2 border border-black shadow font-black text-[10px] uppercase hover:bg-red-50">
