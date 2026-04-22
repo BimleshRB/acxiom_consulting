@@ -26,6 +26,14 @@ export default function LoginPage() {
       try {
         // Auto-correct: remove leading/trailing whitespace
         let cleanEmail = email.trim()
+        if(cleanEmail.length < 8){
+          console.log("Email length must be more then 8 chars");
+          return;
+        }
+          if(password.length < 8){
+          console.log("password length must be more then 8 chars");
+          return;
+        }
         
         const res = await loginUserAction(cleanEmail, password.trim(), role)
         console.log(`[CLIENT-LOGIN] Response received: success=${res.success}`);
